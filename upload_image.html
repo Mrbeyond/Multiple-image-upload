@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+	<input id="filer" type="file" multiple="true" name="files[]" onchange="combine()">
+	<div id="contain"></div>
+	<div id="contain2"></div>
+	
+</body>
+	<script>
+		var Ray=[];
+
+		combine=()=>{
+			concatination();
+			domUsage();
+		}
+ 			
+
+ 		/* Two separate methods are designed to make the upload and preview work perfectly*/
+
+ 		// Method One
+		concatination=()=>{
+			if(filer.files.length <= 4){
+				contain2.innerHTML = ""
+				console.log('Number of file(s) is/are',filer.files.length);
+				for (var i = 0; i < filer.files.length; i++) {
+					contain2.innerHTML +=
+					`<img id=${i} src=${URL.createObjectURL(filer.files[i])} onclick='removeConcatination(this)' class=${i} width = '100' height = '100'	 style='margin:4px' />`
+				};
+			}else {
+				filer.value = "";
+				alert("The maximum number of files you can upload is 4 ");
+			}
+		}
+
+		domUsage=()=>{
+			if(filer.files.length <= 4){
+				console.log(Ray.length);
+				console.log(filer.files.length);
+				for (var i = 0; i < filer.files.length; i++) {
+					Ray.push(filer.files[i])
+				};
+
+				for (var i = 0; i < Ray.length; i++) {
+					// Ray[i]
+					var mage = document.createElement('img')
+					mage.setAttribute('src', URL.createObjectURL(Ray[i]));
+					mage.setAttribute('class', `mage${i}`);
+					mage.setAttribute("id", i);
+					mage.addEventListener('click', remeoveDom);
+					mage.style.width= '100px';
+					mage.style.height = '100px';
+					mage.style.margin = '4px';
+
+					contain.appendChild(mage);
+				}	
+			}else{
+				filer.value = "";
+				alert("The maximum number of files you can upload is 4 ");
+			}	
+		}
+
+		removeConcatination=(e)=>{
+			console.log(e.id);
+			ask = confirm("Do your want to remove the image?")
+			if(!ask) return;
+			document.getElementsByClassName(e.className)[0].remove();
+			Ray.splice(Number(e.id),1);
+		}
+
+		remeoveDom=(e)=>{
+			console.log(e);
+			console.log(e.target.id);
+			ask = confirm("Do your want to remove the image?")
+			if(!ask) return;
+			document.getElementsByClassName(e.target.className)[0].remove();
+			Ray.splice(Number(e.target.id),1);
+		}
+
+		// If the file and other entities are to be submitted to backend
+
+		handleSubmit=()=>{
+			const formMedia = new FormData();
+            for (let i = 0; i < Ray.length; i++) {
+                formMedia.append(`gallery_files[${i}]`, Ray[i])            
+            }
+
+            // other form parameters (key, value)
+            formMedia.append('name', 1);
+            formMedia.append('age', 2);
+            formMedia.append('type', 3);
+            formMedia.append('title', 'from frontend to backend');
+            formMedia.append('class', 3)
+		}
+
+
+
+	</script>
+</html>
